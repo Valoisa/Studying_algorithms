@@ -1,19 +1,29 @@
 #include <vector>
 
+//	Synonims
+typedef std::vector<size_t> number;
+
 //	Global functions
 /*
 		Reads the long number
 		Params: none
 		Return: long number
 */
-std::vector<size_t> read_number(void);
+number read_number(void);
 
 /*
 		Long multiplication
 		Params: numbers to multiply
 		Return: product
 */
-std::vector<size_t> long_mult(const std::vector<size_t> left, const std::vector<size_t> right);
+number long_mult(const number& left, const number& right);
+
+/*
+		Long addition
+		Params: numbers to sum
+		Return: sum
+*/
+number long_add(const number& left, const number& right);
 
 //	Classes
 class Multiplier
@@ -24,9 +34,9 @@ private:
 
 //	Members
 //		First factor
-	std::vector<size_t> m_first_factor;
+	number m_first_factor;
 //		Second factor
-	std::vector<size_t> m_second_factor;
+	number m_second_factor;
 //		Product
-	std::vector<size_t> m_product;
+	number m_product;
 };
