@@ -25,6 +25,13 @@ number long_mult(const number& left, const number& right);
 */
 number long_add(const number& left, const number& right);
 
+/*
+		Recursively multiplies two long numbers
+		Params: numbers to multiply
+		Return: product
+*/
+number rec_mult(const number& x, const number& y);
+
 //	Classes
 class Multiplier
 {

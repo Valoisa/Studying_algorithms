@@ -30,6 +30,11 @@ number trim_left(const number& num)
 	return trimmed_result;
 }
 
+/*
+		Recursive multiplication implementation
+		Params: 
+*/
+
 //	Global functions implementation
 number read_number(void)
 {
@@ -112,18 +117,35 @@ number long_add(const number& left, const number& right)
 		++res_pos;
 	}
 	*res_pos = c;
-	//while (lit != left.rend())
-	//{
-	//	*res_pos += *lit;
-	//	++lit;
-	//	++res_pos;
-	//}
-	//while (rit != right.rend())
-	//{
-	//	*res_pos += *rit;
-	//	++rit;
-	//	++res_pos;
-	//}
 
 	return trim_left(result);
+}
+
+number rec_mult(const number& x, const number& y)
+{
+	if (x.size() == 1 && y.size() == 1)
+		return long_mult(x, y);
+
+	const size_t n_2 = x.size() / 2;
+	number a, b, c, d;
+	a.reserve(n_2);
+	size_t i = 0;
+	for (; i < n_2; ++i)
+		a.push_back(x[i]);
+	b.reserve(n_2);
+	for (; i < x.size(); ++i)
+		b.push_back(x[i]);
+	i = 0;
+	
+	c.reserve(n_2);
+	for (; i < n_2; ++i)
+		c.push_back(y[i]);
+	d.reserve(n_2);
+	for (; i < y.size(); ++i)
+		d.push_back(y[i]);
+
+	const number ac = rec_mult(a, c);
+	const number bd = rec_mult(b, d);
+	const number abcd = rec_mult(long_add(a, b), long_add(c, d));
+//	const number gauss_trick = sub isn't implemented...
 }
