@@ -34,3 +34,10 @@
 # Other
 *.suo
 *.db
+*.pdb
+*.idb
+*.suo
+*.log
+*.tlog
+*.opendb
+*.lastbuildupdate
