@@ -44,11 +44,25 @@ public:
 */
 	friend Number operator*(const Number& a, const Number& b);
 
+//	Static methods
+/*
+		Karatsuba multiplication
+		Params: factors
+		Return: product
+*/
+	static Number karatsuba_mult(const Number& x, const Number& y);
+
 private:
 //	Classes
 	typedef std::vector<int> number_vec;
 
 //	Number - private constructors
+/*
+		Number private default constructor
+		Params: none
+*/
+	Number(void);
+
 /*
 		Number constructor
 		Params: sign, vector
@@ -62,6 +76,20 @@ private:
 		Return: digit
 */
 	const size_t operator[](const size_t idx) const;
+
+/*
+		Gets the size of the number
+		Params: none
+		Return: size
+*/
+	const size_t size(void) const;
+
+/*
+		Breaks a number into two half-numbers
+		Params: output numbers, half-size
+		Return: none
+*/
+	void half_number(Number& beg, Number& end, const size_t half_size) const;
 
 /*
 		Less than operator (for modules)

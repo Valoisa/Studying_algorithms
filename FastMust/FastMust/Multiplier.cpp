@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <string>
 #include <set>
+#include <stack>
 #include <exception>
 
 //	Classes implementation
@@ -46,7 +47,53 @@ Number operator*(const Number& a, const Number& b)
 	return a.long_mult(b, sign);
 }
 
+//		Number - static methods
+Number Number::karatsuba_mult(const Number& x, const Number& y)
+{
+	if (x.size() == 1 && y.size() == 1)
+		return x * y;
+
+	std::cout << std::endl << "Recursive call started" << std::endl;
+	const bool x_longer_than_y = x.size() > y.size();
+	const auto& x_longer = x_longer_than_y ? x : y;
+	const auto& y_shorter = x_longer_than_y ? y : x;
+
+	const size_t x_n = x_longer.size();
+	const size_t x_n_2 = (x_n / 2) + (x_n % 2);
+	Number a, b, c, d;
+//		Longer number is halved as is.
+//		Shorter number is halved the following way:
+//		we take digits from right to left while we can.
+//		If there are no digits left for the 'c' part, 
+//		then we consider it equal to zero
+	x_longer.half_number(a, b, x_n_2);
+	std::cout << "a = ";
+	a.print();
+	std::cout << std::endl << "b = ";
+	b.print();
+	y_shorter.half_number(c, d, x_n_2);
+	std::cout << std:: endl << "c = ";
+	c.print();
+	std::cout << std::endl << "d = ";
+	d.print();
+
+	Number ac = karatsuba_mult(a, c);
+	Number bd = karatsuba_mult(b, d);
+	Number abcd = karatsuba_mult(a + b, c + d);
+	Number ad_bc = abcd - ac - bd;
+
+	for (size_t i = 0; i < x_n; ++i)
+		ac.m_number.push_back(0);
+	for (size_t i = 0; i < x_n_2; ++i)
+		ad_bc.m_number.push_back(0);
+	return ac + ad_bc + bd;
+}
+
 //		Number - private constructors
+Number::Number(void) : m_positive(true)
+{
+}
+
 Number::Number(const number_vec& number_, const bool positive) : m_number(number_), m_positive(positive)
 {
 }
@@ -56,6 +103,44 @@ const size_t Number::operator[](const size_t idx) const
 {
 	return m_number[idx];
 }
+
+const size_t Number::size(void) const
+{
+	return m_number.size();
+}
+
+void Number::half_number(Number& beg, Number& end, const size_t half_size) const
+{
+	std::stack<int> end_st;
+	auto it = m_number.rbegin();
+	while (it != m_number.rend() && end_st.size() != half_size)
+	{
+		end_st.push(*it);
+		++it;
+	}
+	end.m_number.reserve(end_st.size());
+	while (!end_st.empty())
+	{
+		end.m_number.push_back(end_st.top());
+		end_st.pop();
+	}
+
+	std::stack<int> beg_st;
+	while (it != m_number.rend() && beg_st.size() != half_size)
+	{
+		beg_st.push(*it);
+		++it;
+	}
+	beg.m_number.reserve(beg_st.size());
+	while (!beg_st.empty())
+	{
+		beg.m_number.push_back(beg_st.top());
+		beg_st.pop();
+	}
+	if (beg.m_number.empty())
+		beg.m_number.assign(1, 0);
+}
+
 bool Number::lt_mod(const Number& other) const
 {
 	if (m_number.size() != other.m_number.size())
@@ -213,7 +298,7 @@ void Number::trim_left(void)
 {
 	size_t zeros = 0;
 	auto it = m_number.begin();
-	while (*it == 0)
+	while (it != m_number.end() && *it == 0)
 	{
 		++zeros;
 		++it;
@@ -224,6 +309,8 @@ void Number::trim_left(void)
 		trimmed_result.push_back(*it);
 	m_number.clear();
 	m_number = trimmed_result;
+	if (m_number.empty())
+		m_number.assign(1, 0);
 }
 
 void Number::print(void) const
@@ -255,11 +342,6 @@ number trim_left(const number& num)
 	return trimmed_result;
 }
 
-/*
-		Recursive multiplication implementation
-		Params: 
-*/
-
 //	Global functions implementation
 std::string read_number(void)
 {
@@ -289,34 +371,4 @@ std::string read_number(void)
 	}
 
 	return result;
-}
-
-number rec_mult(const number& x, const number& y)
-{
-	//if (x.size() == 1 && y.size() == 1)
-	//	return long_mult(x, y);
-
-	//const size_t n_2 = x.size() / 2;
-	//number a, b, c, d;
-	//a.reserve(n_2);
-	//size_t i = 0;
-	//for (; i < n_2; ++i)
-	//	a.push_back(x[i]);
-	//b.reserve(n_2);
-	//for (; i < x.size(); ++i)
-	//	b.push_back(x[i]);
-	//i = 0;
-	//
-	//c.reserve(n_2);
-	//for (; i < n_2; ++i)
-	//	c.push_back(y[i]);
-	//d.reserve(n_2);
-	//for (; i < y.size(); ++i)
-	//	d.push_back(y[i]);
-
-	//const number ac = rec_mult(a, c);
-	//const number bd = rec_mult(b, d);
-	//const number abcd = rec_mult(long_add(a, b), long_add(c, d));
-//	const number gauss_trick = sub isn't implemented...
-	return{};
 }
