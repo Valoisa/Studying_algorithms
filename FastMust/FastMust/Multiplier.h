@@ -1,8 +1,5 @@
 #include <vector>
 
-//	Synonims
-typedef std::vector<int> number;
-
 //	Classes
 class Number
 {
@@ -175,26 +172,3 @@ private:
 		Return: long number
 */
 std::string read_number(void);
-
-/*
-		Recursively multiplies two long numbers
-		Params: numbers to multiply
-		Return: product
-*/
-number rec_mult(const number& x, const number& y);
-
-//	Classes
-class Multiplier
-{
-public:
-
-private:
-
-//	Members
-//		First factor
-	number m_first_factor;
-//		Second factor
-	number m_second_factor;
-//		Product
-	number m_product;
-};

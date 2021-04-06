@@ -53,7 +53,6 @@ Number Number::karatsuba_mult(const Number& x, const Number& y)
 	if (x.size() == 1 && y.size() == 1)
 		return x * y;
 
-	std::cout << std::endl << "Recursive call started" << std::endl;
 	const bool x_longer_than_y = x.size() > y.size();
 	const auto& x_longer = x_longer_than_y ? x : y;
 	const auto& y_shorter = x_longer_than_y ? y : x;
@@ -67,15 +66,7 @@ Number Number::karatsuba_mult(const Number& x, const Number& y)
 //		If there are no digits left for the 'c' part, 
 //		then we consider it equal to zero
 	x_longer.half_number(a, b, x_n_2);
-	std::cout << "a = ";
-	a.print();
-	std::cout << std::endl << "b = ";
-	b.print();
 	y_shorter.half_number(c, d, x_n_2);
-	std::cout << std:: endl << "c = ";
-	c.print();
-	std::cout << std::endl << "d = ";
-	d.print();
 
 	Number ac = karatsuba_mult(a, c);
 	Number bd = karatsuba_mult(b, d);
@@ -318,28 +309,6 @@ void Number::print(void) const
 	std::cout << (m_positive ? "" : "-");
 	for (const auto x : m_number)
 		std::cout << x;
-}
-
-//	Local functions
-/*
-		Trims left zeros in the number
-		Params: number to trim
-		Return: result
-*/
-number trim_left(const number& num)
-{
-	size_t zeros = 0;
-	auto it = num.begin();
-	while (*it == 0)
-	{
-		++zeros;
-		++it;
-	}
-	number trimmed_result;
-	trimmed_result.reserve(num.size() - zeros);
-	for (; it != num.end(); ++it)
-		trimmed_result.push_back(*it);
-	return trimmed_result;
 }
 
 //	Global functions implementation
