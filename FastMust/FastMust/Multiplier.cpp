@@ -17,13 +17,33 @@ Number::Number(const std::string& number)
 	size_t i = positive ? 0 : 1;
 	m_number.reserve(number.size() - i);
 	for (; i < number.size(); ++i)
-		m_number.push_back((size_t)(number[i] - '0'));
+		m_number.push_back((int)(number[i] - '0'));
 }
 
 //		Number - friend functions
 Number operator+(const Number& a, const Number& b)
 {
-	return a.long_add(b, true);
+	if (!(a.m_positive ^ b.m_positive)) // same signs
+		return a.long_add(b, a.m_positive);
+	else // different signs
+	{
+		const bool a_gr_b = a.gt_mod(b);
+		const auto& c = a_gr_b ? a : b;
+		const auto& d = a_gr_b ? b : a;
+		return c.long_sub(d, c.m_positive);
+	}
+}
+
+Number operator-(const Number& a, const Number& b)
+{
+	const Number b_oppos(b.m_number, !b.m_positive);
+	return a + b_oppos;
+}
+
+Number operator*(const Number& a, const Number& b)
+{
+	const bool sign = !(a.m_positive ^ b.m_positive);
+	return a.long_mult(b, sign);
 }
 
 //		Number - private constructors
@@ -36,21 +56,71 @@ const size_t Number::operator[](const size_t idx) const
 {
 	return m_number[idx];
 }
+bool Number::lt_mod(const Number& other) const
+{
+	if (m_number.size() != other.m_number.size())
+		return m_number.size() < other.m_number.size();
+	for (size_t i = 0; i < m_number.size(); ++i)
+	{
+		if (m_number[i] != other.m_number[i])
+			return m_number[i] < other.m_number[i];
+	}
+	return false;
+}
+
+bool Number::gt_mod(const Number& other) const
+{
+	if (m_number.size() != other.m_number.size())
+		return m_number.size() > other.m_number.size();
+	for (size_t i = 0; i < m_number.size(); ++i)
+	{
+		if (m_number[i] != other.m_number[i])
+			return m_number[i] > other.m_number[i];
+	}
+	return false;
+}
+
+bool Number::eq_mod(const Number& other) const
+{
+	if (m_number.size() != other.m_number.size())
+		return false;
+	for (size_t i = 0; i < m_number.size(); ++i)
+	{
+		if (m_number[i] != other.m_number[i])
+			return false;
+	}
+	return true;
+}
+
+bool Number::neq_mod(const Number& other) const
+{
+	return !(eq_mod(other));
+}
+
+bool Number::loe_mod(const Number& other) const
+{
+	return !(gt_mod(other));
+}
+
+bool Number::goe_mod(const Number& other) const
+{
+	return !(lt_mod(other));
+}
 
 Number Number::long_add(const Number& x, const bool sign) const
 {
 	const auto& left = m_number;
 	const auto& right = x.m_number;
-	Number result(std::vector<size_t>(std::max(left.size(), right.size()) + 1, 0), sign);
+	Number result(number_vec(std::max(left.size(), right.size()) + 1, 0), sign);
 	auto lit = left.rbegin();
 	auto rit = right.rbegin();
 	auto res_pos = result.m_number.rbegin();
-	size_t c = 0;
+	int c = 0;
 	while (lit != left.rend() || rit != right.rend())
 	{
-		const size_t a = lit == left.rend() ? 0 : *lit;
-		const size_t b = rit == right.rend() ? 0 : *rit;
-		const size_t x = a + b + c;
+		const int a = lit == left.rend() ? 0 : *lit;
+		const int b = rit == right.rend() ? 0 : *rit;
+		const int x = a + b + c;
 		*res_pos = x % 10;
 		c = x / 10;
 		if (lit != left.rend())
@@ -64,11 +134,61 @@ Number Number::long_add(const Number& x, const bool sign) const
 	return result;
 }
 
+Number Number::long_sub(const Number& x, const bool sign) const
+{
+	const auto& left = m_number;
+	const auto& right = x.m_number;
+	if (left.size() < right.size())
+		throw std::exception("Minued must be greater than subtrahend.");
+	Number result(number_vec(left.size(), 0), sign);
+	auto lit = left.rbegin();
+	auto rit = right.rbegin();
+	auto res_pos = result.m_number.rbegin();
+	int c = 0;
+	while (lit != left.rend())
+	{
+		const int b = (rit == right.rend() ? 0 : *rit);
+		const int a = [&]() 
+		{
+			if (*lit - c >= b)
+			{
+				const int temp = *lit - c;
+				c = 0;
+				return temp;
+			}
+			else
+			{
+				const int lit_borrowed = *lit + 10;
+				if (lit_borrowed - c >= b)
+				{
+					const int temp = lit_borrowed - c;
+					c = 1;
+					return temp;
+				}
+//				Is this ever possible???
+				else
+				{
+					const int temp = lit_borrowed + 10 - c;
+					c += 1;
+					return temp;
+				}
+			}
+		}();
+		*res_pos = a - b;
+		if (rit != right.rend())
+			++rit;
+		++lit;
+		++res_pos;
+	}
+	result.trim_left();
+	return result;
+}
+
 Number Number::long_mult(const Number& x, const bool sign) const
 {
 	const auto& left = m_number;
 	const auto& right = x.m_number;
-	Number result(std::vector<size_t>(2 * std::max(left.size(), right.size()), 0), sign);
+	Number result(number_vec(2 * std::max(left.size(), right.size()), 0), sign);
 	size_t pos = 0;
 	for (auto lit = left.rbegin(); lit != left.rend(); ++lit)
 	{
@@ -76,8 +196,8 @@ Number Number::long_mult(const Number& x, const bool sign) const
 		auto res_pos = result.m_number.rbegin() + pos;
 		for (auto rit = right.rbegin(); rit != right.rend(); ++rit)
 		{
-			const size_t x = (*lit) * (*rit) + (*res_pos) + c;
-			const size_t r = x % 10;
+			const int x = (*lit) * (*rit) + (*res_pos) + c;
+			const int r = x % 10;
 			c = x / 10;
 			*res_pos = r;
 			++res_pos;
@@ -98,7 +218,7 @@ void Number::trim_left(void)
 		++zeros;
 		++it;
 	}
-	number trimmed_result;
+	number_vec trimmed_result;
 	trimmed_result.reserve(m_number.size() - zeros);
 	for (; it != m_number.end(); ++it)
 		trimmed_result.push_back(*it);

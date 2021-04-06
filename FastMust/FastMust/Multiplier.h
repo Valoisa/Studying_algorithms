@@ -1,7 +1,7 @@
 #include <vector>
 
 //	Synonims
-typedef std::vector<size_t> number;
+typedef std::vector<int> number;
 
 //	Classes
 class Number
@@ -46,7 +46,7 @@ public:
 
 private:
 //	Classes
-	typedef std::vector<size_t> number_vec;
+	typedef std::vector<int> number_vec;
 
 //	Number - private constructors
 /*
@@ -64,11 +64,60 @@ private:
 	const size_t operator[](const size_t idx) const;
 
 /*
+		Less than operator (for modules)
+		Params: number to compare
+		Return: comparison result
+*/
+	bool lt_mod(const Number& other) const;
+
+/*
+		Greater than operator (for modules)
+		Params: number to compare
+		Return: comparison result
+*/
+	bool gt_mod(const Number& other) const;
+
+/*
+		Equal to operator (for modules)
+		Params: number to compare
+		Return: comparison result
+*/
+	bool eq_mod(const Number& other) const;
+
+/*
+		Not equal to operator (for modules)
+		Params: number to compare
+		Return: comparison result
+*/
+	bool neq_mod(const Number& other) const;
+
+/*
+		Less or equal operator (for modules)
+		Params: number to compare
+		Return: comparison result
+*/
+	bool loe_mod(const Number& other) const;
+
+/*
+		Greater or equal operator (for modules)
+		Params: number to compare
+		Return: comparison result
+*/
+	bool goe_mod(const Number& other) const;
+
+/*
 		Adds two long numbers
 		Params: number to add, sum sign
 		Return: sum
 */
 	Number long_add(const Number& x, const bool sign) const;
+
+/*
+		Subs two long numbers
+		Params: number to sub, diff sign
+		Return: diff
+*/
+	Number long_sub(const Number& x, const bool sign) const;
 
 /*
 		Multiplies two long numbers
