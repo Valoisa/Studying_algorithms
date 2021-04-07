@@ -47,7 +47,6 @@ Number operator*(const Number& a, const Number& b)
 	return a.long_mult(b, sign);
 }
 
-//		Number - static methods
 Number karatsuba_mult(const Number& x, const Number& y)
 {
 	if (x.size() == 1 && y.size() == 1)

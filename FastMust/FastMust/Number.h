@@ -41,7 +41,6 @@ public:
 */
 	friend Number operator*(const Number& a, const Number& b);
 
-//	Static methods
 /*
 		Karatsuba multiplication
 		Params: factors
