@@ -1,5 +1,5 @@
 //	Local includes
-#include "Multiplier.h"
+#include "Number.h"
 
 //	Standard includes
 #include <iostream>
@@ -57,27 +57,34 @@ Number Number::karatsuba_mult(const Number& x, const Number& y)
 	const auto& x_longer = x_longer_than_y ? x : y;
 	const auto& y_shorter = x_longer_than_y ? y : x;
 
+//		N
 	const size_t x_n = x_longer.size();
+//		N / 2 (rounded up)
 	const size_t x_n_2 = (x_n / 2) + (x_n % 2);
 	Number a, b, c, d;
-//		Longer number is halved as is.
-//		Shorter number is halved the following way:
-//		we take digits from right to left while we can.
+//		Number is halved the following way:
+//		we take N/2 digits from right to left while we can.
 //		If there are no digits left for the 'c' part, 
 //		then we consider it equal to zero
 	x_longer.half_number(a, b, x_n_2);
 	y_shorter.half_number(c, d, x_n_2);
 
+//		Count the products recursively
 	Number ac = karatsuba_mult(a, c);
 	Number bd = karatsuba_mult(b, d);
 	Number abcd = karatsuba_mult(a + b, c + d);
 	Number ad_bc = abcd - ac - bd;
 
+//		Multiply by 10 ^ N
 	for (size_t i = 0; i < x_n; ++i)
 		ac.m_number.push_back(0);
+//		Multiply by 10 ^ N/2
 	for (size_t i = 0; i < x_n_2; ++i)
 		ad_bc.m_number.push_back(0);
-	return ac + ad_bc + bd;
+	Number res = ac + ad_bc + bd;
+
+	res.m_positive = !(x.m_positive ^ y.m_positive);
+	return res;
 }
 
 //		Number - private constructors

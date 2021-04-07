@@ -1,4 +1,4 @@
-#include "Multiplier.h"
+#include "Number.h"
 #include <iostream>
 
 int main()
