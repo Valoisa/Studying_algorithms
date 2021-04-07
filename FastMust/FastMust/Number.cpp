@@ -48,7 +48,7 @@ Number operator*(const Number& a, const Number& b)
 }
 
 //		Number - static methods
-Number Number::karatsuba_mult(const Number& x, const Number& y)
+Number karatsuba_mult(const Number& x, const Number& y)
 {
 	if (x.size() == 1 && y.size() == 1)
 		return x * y;

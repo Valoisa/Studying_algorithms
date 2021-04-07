@@ -47,7 +47,7 @@ public:
 		Params: factors
 		Return: product
 */
-	static Number karatsuba_mult(const Number& x, const Number& y);
+	friend Number karatsuba_mult(const Number& x, const Number& y);
 
 private:
 //	Classes
