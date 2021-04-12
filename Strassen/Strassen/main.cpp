@@ -8,7 +8,7 @@ int main()
 	Matrix<int> b = Matrix<int>::generate_matrix(2, 2);
 	b.print();
 	std::cout << std::endl;
-	Matrix<int> res = a + b;
+	Matrix<int> res = strassen(a, b);
 	res.print();
 	return 0;
 }
