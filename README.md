@@ -8,8 +8,9 @@ This repository contains several projects, in which some algorithms are implemen
 * Counting inversions with the help of merge sort
 
 *Fast Mult*:
-* Long add, sub, mult (implemented by the Number class)
-* Karatsuba multiplication (implemented by the Number class)
+* Number template class, represent the long number
+* Long add, sub, mult
+* Karatsuba multiplication
 
 *Strassen*
 * Matrix template class
