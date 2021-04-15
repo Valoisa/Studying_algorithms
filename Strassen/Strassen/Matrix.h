@@ -4,22 +4,13 @@
 #include <exception>
 #include <iostream>
 #include <iomanip>
-
-//	C includes
-#include <stdlib.h>
-#include <time.h>  
+#include <functional>
+//	Local includes
+#include "Helpers.h"
 
 //	Macros
 //		Max number
 #define max(a,b) ((a)>(b)?(a):(b))
-
-//	Local functions
-/*
-		Finds the nearest next power of 2
-		Params: number
-		Return: power of 2
-*/
-size_t nearest_power(const size_t y);
 
 //	Global classes
 //		Matrix template class
@@ -34,7 +25,7 @@ public:
 	*/
 	Matrix(const size_t row_count, const size_t col_count) : m_row_count(row_count), m_col_count(col_count)
 	{
-		m_matrix.assign(row_count, Matrix::row_type(col_count, 0));
+		m_matrix.assign(row_count, Matrix::row_type(col_count, Elem()));
 	}
 
 	/*
@@ -43,7 +34,7 @@ public:
 	*/
 	explicit Matrix(const size_t n) : m_row_count(n), m_col_count(n)
 	{
-		m_matrix.assign(m_row_count, Matrix::row_type(m_col_count, 0));
+		m_matrix.assign(m_row_count, Matrix::row_type(m_col_count, Elem()));
 	}
 
 	//	Public methods
@@ -127,23 +118,23 @@ public:
 		const size_t pow = nearest_power(max_dim);
 		const Matrix x = a.squarize(pow);
 		const Matrix y = b.squarize(pow);
-		const Matrix res = strassen_mult(x, y);
+		Matrix res = strassen_mult(x, y);
+		res.resize(a.m_row_count, b.m_col_count);
 		return res;
 	}
 
 //	Static methods
 /*
 		Randomly generates an integer matrix
-		Params: n x m
+		Params: n x m, functor to generate the element of the matrix
 		Return: integer matrix
 */
-	static Matrix<int> generate_matrix(const size_t n, const size_t m)
+	static Matrix generate_matrix(const size_t n, const size_t m, const std::function<Elem()>& functor)
 	{
-		Matrix<int> result(n, m);
-		srand(time(NULL));
+		Matrix result(n, m);
 		for (size_t i = 0; i < n; ++i)
 			for (size_t j = 0; j < m; ++j)
-				result.m_matrix[i][j] = rand() % 100;
+				result.m_matrix[i][j] = functor();
 		return result;
 	}
 
@@ -171,6 +162,20 @@ private:
 			for (size_t j = 0; j < m_col_count; ++j)
 				res.m_matrix[i][j] = m_matrix[i][j];
 		return res;
+	}
+
+/*
+		Cuts matrix to the given size
+		Params: n x m
+		Reutrn: none
+*/
+	void resize(const size_t n, const size_t m)
+	{
+		m_row_count = n;
+		m_col_count = m;
+		m_matrix.resize(n);
+		for (auto& row : m_matrix)
+			row.resize(m);
 	}
 
 //	Private static methods
