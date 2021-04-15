@@ -10,3 +10,8 @@ This repository contains several projects, in which some algorithms are implemen
 *Fast Mult*:
 * Long add, sub, mult (implemented by the Number class)
 * Karatsuba multiplication (implemented by the Number class)
+
+*Strassen*
+* Matrix template class
+* Matrix addition subtraction, straight-forward multiplication
+* Strassen mutiplication
