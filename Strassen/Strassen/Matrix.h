@@ -96,7 +96,7 @@ public:
 	*/
 	friend Matrix operator*(const Matrix& a, const Matrix& b)
 	{
-		const bool equal_dims = a.m_col_count == b.m_col_count;
+		const bool equal_dims = a.m_col_count == b.m_row_count;
 		if (!equal_dims)
 			throw std::exception("Unable to multiply matrices with incoherent dimensions.");
 		Matrix res(a.m_row_count, b.m_col_count);
@@ -114,6 +114,9 @@ public:
 	*/
 	friend Matrix strassen(const Matrix& a, const Matrix& b)
 	{
+		const bool equal_dims = a.m_col_count == b.m_row_count;
+		if (!equal_dims)
+			throw std::exception("Unable to multiply matrices with incoherent dimensions.");
 		const size_t max_dim = max(max(a.m_row_count, b.m_row_count), max(a.m_col_count, b.m_col_count));
 		const size_t pow = nearest_power(max_dim);
 		const Matrix x = a.squarize(pow);
