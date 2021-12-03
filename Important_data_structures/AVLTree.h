@@ -1,3 +1,14 @@
+/*
+	This is template implementation of the AVL-tree. AVL-tree is a container with the same conditions as the BST,
+	but it's self-balancing: for every node its subtree heights differ by no more than 1.
+
+	Complexity:
+		Space: O(n)
+		Search: O(log n)
+		Insert: O(log n)
+		Delete: O(log n)
+*/
+
 #include "Exception.h"
 
 namespace Trees
