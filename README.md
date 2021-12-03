@@ -17,7 +17,7 @@ This repository contains several projects, in which some algorithms are implemen
 * Matrix addition subtraction, straight-forward multiplication
 * Strassen mutiplication
 
-Also there are some importanr data structures implementation.
+Also there are some important data structures implementation.
 *Binary heap*:
 * Insert O(log n)
 * GetMin/GetMax O(1)
